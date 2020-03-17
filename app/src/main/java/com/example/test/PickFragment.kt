@@ -1,6 +1,7 @@
 package com.example.test
 
 
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,13 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import java.lang.ClassCastException
 
 /**
  * A simple [Fragment] subclass.
  */
-class PickFragment : Fragment() {
+class PickFragment : Fragment(), ChildFragmentRemover {
 
-    private var isSibling: Boolean= true
+    private var isSibling: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,21 +34,29 @@ class PickFragment : Fragment() {
         return rootView
     }
 
-   companion object{
-       fun newInstance(flag: Boolean): PickFragment{
-           val fragment = PickFragment()
-           val bundle = Bundle()
-           bundle.putBoolean("isSibling", flag)
-           fragment.arguments =bundle
+    companion object {
+        fun newInstance(flag: Boolean): PickFragment {
+            val fragment = PickFragment()
+            val bundle = Bundle()
+            bundle.putBoolean("isSibling", flag)
+            fragment.arguments = bundle
 
-           return fragment
-       }
-   }
+            return fragment
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            isSibling=it.getBoolean("isSibling")
+            isSibling = it.getBoolean("isSibling")
         }
     }
+
+    override fun removeChildFragment() {
+        if(!isSibling){
+            childFragmentManager.beginTransaction().remove(childFragmentManager.findFragmentByTag("PICKER")!!).commit()
+        }
+    }
+
+
 }

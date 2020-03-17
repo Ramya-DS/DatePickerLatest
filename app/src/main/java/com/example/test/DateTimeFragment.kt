@@ -21,11 +21,10 @@ import java.lang.ClassCastException
 /**
  * A simple [Fragment] subclass.
  */
-class DateTimeFragment : DialogFragment(), FragmentToFragmentInterface {
+class DateTimeFragment : DialogFragment() {
 
     var isSibling: Boolean? = null
 
-    var mFragmentToActivityInterface: FragmentToActivityInterface? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -91,20 +90,5 @@ class DateTimeFragment : DialogFragment(), FragmentToFragmentInterface {
         }
     }
 
-    override fun dialogCloseFragment() {
-        this.dismiss()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mFragmentToActivityInterface=context as FragmentToActivityInterface
-
-        if(mFragmentToActivityInterface==null)
-            throw ClassCastException("$context should implement")
-    }
-
-    override fun dataChangedFragment(isDate: Boolean, data: String) {
-        mFragmentToActivityInterface!!.dataChangedActivity(isDate,data)
-    }
 
 }

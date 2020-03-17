@@ -33,9 +33,7 @@ class DateFragment : Fragment() {
         }
     }
 
-    private var mFragmentToActivityInterface: FragmentToActivityInterface? = null
-    private var mFragmentToFragmentInterface: FragmentToFragmentInterface? = null
-
+    private var listener: Listener? = null
 
     private lateinit var datePicker: DatePicker
     private var isSibling: Boolean? = null
@@ -73,22 +71,15 @@ class DateFragment : Fragment() {
         }
 
         cancelButton.setOnClickListener {
-            if (isSibling == null)
-                mFragmentToActivityInterface!!.dialogcloseActivity()
-            else {
-                mFragmentToFragmentInterface!!.dialogCloseFragment()
-            }
+                listener!!.closeDialog()
         }
 
         doneButton.setOnClickListener {
-            if (isSibling == null) {
-                mFragmentToActivityInterface!!.dataChangedActivity(true,formatter.format(Date(currentYear - 1900, currentMonth, currentDate)))
-                mFragmentToActivityInterface!!.dialogcloseActivity()
-            } else {
-                mFragmentToFragmentInterface!!.dataChangedFragment(true,formatter.format(Date(currentYear - 1900, currentMonth, currentDate)))
-                mFragmentToFragmentInterface!!.dialogCloseFragment()
-            }
-
+                listener!!.dataChanged(
+                    true,
+                    formatter.format(Date(currentYear - 1900, currentMonth, currentDate))
+                )
+                listener!!.closeDialog()
         }
         clearButton.setOnClickListener {
             currentDate = initialDate
@@ -124,18 +115,16 @@ class DateFragment : Fragment() {
             isSibling = it.getBoolean("isSibling")
         }
 
-        if (isSibling == null) mFragmentToActivityInterface = context as FragmentToActivityInterface
+        listener=context as Listener
 
-        else mFragmentToFragmentInterface = context as FragmentToFragmentInterface
-
-        if (mFragmentToActivityInterface == null && mFragmentToFragmentInterface == null) {
+        if (listener == null) {
             throw ClassCastException("$context implement")
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        if (isSibling == null) mFragmentToActivityInterface = null
-        else mFragmentToFragmentInterface = null
-    }
+//    override fun onDetach() {
+//        super.onDetach()
+//        listener=null
+//    }
+
 }

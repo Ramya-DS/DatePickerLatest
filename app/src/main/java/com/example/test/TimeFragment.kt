@@ -22,21 +22,20 @@ import java.text.SimpleDateFormat
 class TimeFragment : Fragment() {
 
     companion object {
-        fun newInstance(flag:Boolean): TimeFragment{
+        fun newInstance(flag: Boolean): TimeFragment {
             val fragment = TimeFragment()
             val bundle = Bundle()
             bundle.putBoolean("isSibling", flag)
-            fragment.arguments =bundle
+            fragment.arguments = bundle
 
             return fragment
         }
     }
 
-    private var mFragmentToActivityInterface: FragmentToActivityInterface? = null
-    private var mFragmentToFragmentInterface: FragmentToFragmentInterface? = null
+    private var listener:Listener?=null
 
     private lateinit var timePicker: TimePicker
-    private var isSibling: Boolean?=null
+    private var isSibling: Boolean? = null
 
     private var currentHour = 0
     private var currentMinute = 0
@@ -68,11 +67,7 @@ class TimeFragment : Fragment() {
         }
 
         cancelButton.setOnClickListener {
-            if (isSibling == null)
-                mFragmentToActivityInterface!!.dialogcloseActivity()
-            else {
-                mFragmentToFragmentInterface!!.dialogCloseFragment()
-            }
+            listener!!.closeDialog()
         }
 
         clearButton.setOnClickListener {
@@ -91,13 +86,8 @@ class TimeFragment : Fragment() {
                     }
                     else -> "$currentHour : $currentMinute AM"
                 }
-            if (isSibling == null) {
-                mFragmentToActivityInterface!!.dataChangedActivity(false, time)
-                mFragmentToActivityInterface!!.dialogcloseActivity()
-            } else {
-                mFragmentToFragmentInterface!!.dataChangedFragment(false,time)
-                mFragmentToFragmentInterface!!.dialogCloseFragment()
-            }
+            listener!!.dataChanged(false,time)
+            listener!!.closeDialog()
         }
         return rootView
     }
@@ -117,23 +107,22 @@ class TimeFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        arguments?.let{
-            isSibling=it.getBoolean("isSibling")
+        arguments?.let {
+            isSibling = it.getBoolean("isSibling")
         }
 
-        if (isSibling == null) mFragmentToActivityInterface = context as FragmentToActivityInterface
-        else mFragmentToFragmentInterface = context as FragmentToFragmentInterface
+        listener=context as Listener
 
-        if (mFragmentToActivityInterface == null && mFragmentToFragmentInterface == null) {
+        if (listener == null ) {
             throw ClassCastException("$context implement")
         }
     }
+//
+//    override fun onDetach() {
+//        super.onDetach()
+//        listener=null
+//    }
 }
