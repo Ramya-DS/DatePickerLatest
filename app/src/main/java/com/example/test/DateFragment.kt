@@ -18,7 +18,7 @@ import java.util.*
 /**
  * A simple [Fragment] subclass.
  */
-class DateFragment : Fragment() {
+class DateFragment : Fragment(){
 
     companion object {
         val formatter = SimpleDateFormat("dd/MM/yyyy")
@@ -43,7 +43,7 @@ class DateFragment : Fragment() {
     private var currentYear: Int = 0
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
+//    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,22 +64,28 @@ class DateFragment : Fragment() {
         currentMonth = initialMonth
         currentYear = initialYear
 
-        datePicker.setOnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
+//        datePicker.setOnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
+//            currentDate = dayOfMonth
+//            currentMonth = monthOfYear
+//            currentYear = year
+//        }
+
+        datePicker.init(currentYear,currentMonth,currentDate) { view, year, monthOfYear, dayOfMonth ->
             currentDate = dayOfMonth
             currentMonth = monthOfYear
             currentYear = year
         }
 
-        cancelButton.setOnClickListener {
-                listener!!.closeDialog()
+    cancelButton.setOnClickListener {
+            listener!!.closeDialog()
         }
 
         doneButton.setOnClickListener {
-                listener!!.dataChanged(
-                    true,
-                    formatter.format(Date(currentYear - 1900, currentMonth, currentDate))
-                )
-                listener!!.closeDialog()
+            listener!!.dataChanged(
+                true,
+                formatter.format(Date(currentYear - 1900, currentMonth, currentDate))
+            )
+            listener!!.closeDialog()
         }
         clearButton.setOnClickListener {
             currentDate = initialDate
@@ -121,7 +127,6 @@ class DateFragment : Fragment() {
             throw ClassCastException("$context implement")
         }
     }
-
 //    override fun onDetach() {
 //        super.onDetach()
 //        listener=null

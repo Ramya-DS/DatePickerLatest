@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), Listener {
                 it.beginTransaction().remove(it.findFragmentByTag("PICKER")!!).commit()
             }
         }
-       else{
+        else{
             mChildFragmentRemover!!.removeChildFragment()
         }
 

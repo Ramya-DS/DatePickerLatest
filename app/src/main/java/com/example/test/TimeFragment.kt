@@ -41,7 +41,7 @@ class TimeFragment : Fragment() {
     private var currentMinute = 0
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
+//    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,8 +54,8 @@ class TimeFragment : Fragment() {
         val clearButton: Button = rootView.findViewById(R.id.clearButtonTime)
         val doneButton: Button = rootView.findViewById(R.id.doneButtonTime)
 
-        val initialHour = timePicker.hour
-        val initialMinute = timePicker.minute
+        val initialHour = timePicker.currentHour
+        val initialMinute = timePicker.currentMinute
 
         currentHour = initialHour
         currentMinute = initialMinute
@@ -73,8 +73,8 @@ class TimeFragment : Fragment() {
         clearButton.setOnClickListener {
             currentMinute = initialMinute
             currentHour = initialHour
-            timePicker.hour = initialHour
-            timePicker.minute = initialMinute
+            timePicker.currentHour = initialHour
+            timePicker.currentMinute = initialMinute
         }
 
         doneButton.setOnClickListener {
@@ -98,12 +98,12 @@ class TimeFragment : Fragment() {
         outState.putInt("minute", currentMinute)
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+//    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         savedInstanceState?.let {
-            timePicker.hour = it.getInt("hour")
-            timePicker.minute = it.getInt("minute")
+            timePicker.currentHour = it.getInt("hour")
+            timePicker.currentMinute = it.getInt("minute")
         }
     }
 
