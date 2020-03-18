@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), Listener {
         timeText = findViewById(R.id.time)
 
         activityButton.setOnClickListener {
-            supportFragmentManager.popBackStack("PICK",POP_BACK_STACK_INCLUSIVE)
+            supportFragmentManager.popBackStack("PICK", POP_BACK_STACK_INCLUSIVE)
             DateTimeFragment().show(supportFragmentManager, "PICKER")
 //            supportFragmentManager.beginTransaction().add(DateTimeFragment(),"PICKER").addToBackStack(null).commit()
         }
@@ -93,8 +93,6 @@ class MainActivity : AppCompatActivity(), Listener {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        savedInstanceState?.let {
-            isSibling = it.getBoolean("isSibling", true)
-        }
+        isSibling = savedInstanceState.getBoolean("isSibling", true)
     }
 }
