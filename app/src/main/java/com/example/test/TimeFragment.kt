@@ -96,6 +96,7 @@ class TimeFragment : Fragment() {
         super.onSaveInstanceState(outState)
         outState.putInt("hour", currentHour)
         outState.putInt("minute", currentMinute)
+        isSibling?.let { outState.putBoolean("isSibling", it) }
     }
 
 //    @RequiresApi(Build.VERSION_CODES.M)
@@ -104,6 +105,7 @@ class TimeFragment : Fragment() {
         savedInstanceState?.let {
             timePicker.currentHour = it.getInt("hour")
             timePicker.currentMinute = it.getInt("minute")
+            isSibling=it.getBoolean("isSibling",true)
         }
     }
 
@@ -111,7 +113,7 @@ class TimeFragment : Fragment() {
         super.onAttach(context)
 
         arguments?.let {
-            isSibling = it.getBoolean("isSibling")
+            isSibling = it.getBoolean("isSibling",true)
         }
 
         listener=context as Listener

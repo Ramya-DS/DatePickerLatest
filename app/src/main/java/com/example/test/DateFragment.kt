@@ -109,7 +109,7 @@ class DateFragment : Fragment(){
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         savedInstanceState?.let {
-            isSibling = it.getBoolean("isSibling")
+            isSibling = it.getBoolean("isSibling",true)
             datePicker.updateDate(it.getInt("year"), it.getInt("month"), it.getInt("date"))
         }
     }
@@ -118,7 +118,7 @@ class DateFragment : Fragment(){
         super.onAttach(context)
 
         arguments?.let {
-            isSibling = it.getBoolean("isSibling")
+            isSibling = it.getBoolean("isSibling",true)
         }
 
         listener=context as Listener

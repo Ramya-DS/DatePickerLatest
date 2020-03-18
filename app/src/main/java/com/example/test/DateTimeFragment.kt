@@ -90,5 +90,15 @@ class DateTimeFragment : DialogFragment() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        isSibling?.let { outState.putBoolean("isSibling", it) }
+    }
 
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        savedInstanceState?.let {
+            isSibling=it.getBoolean("isSibling",true)
+        }
+    }
 }

@@ -16,7 +16,7 @@ import java.lang.ClassCastException
  */
 class PickFragment : Fragment(), ChildFragmentRemover {
 
-    private var isSibling: Boolean = true
+    private var isSibling: Boolean? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,10 +26,15 @@ class PickFragment : Fragment(), ChildFragmentRemover {
         val pickButton = rootView.findViewById<Button>(R.id.pick)
 
         pickButton.setOnClickListener {
-            if (isSibling)
-                DateTimeFragment.newInstance(true).show(activity!!.supportFragmentManager, "PICKER")
-            else
-                DateTimeFragment.newInstance(false).show(childFragmentManager, "PICKER")
+            isSibling?.let {
+                if (it)
+                    DateTimeFragment.newInstance(it).show(
+                        activity!!.supportFragmentManager,
+                        "PICKER"
+                    )
+                else
+                    DateTimeFragment.newInstance(it).show(childFragmentManager, "PICKER")
+            }
         }
         return rootView
     }
@@ -48,15 +53,34 @@ class PickFragment : Fragment(), ChildFragmentRemover {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            isSibling = it.getBoolean("isSibling")
+            isSibling = it.getBoolean("isSibling", true)
         }
     }
 
     override fun removeChildFragment() {
-        if(!isSibling){
-            childFragmentManager.beginTransaction().remove(childFragmentManager.findFragmentByTag("PICKER")!!).commit()
+        if (!(isSibling!!)) {
+            childFragmentManager.beginTransaction()
+                .remove(childFragmentManager.findFragmentByTag("PICKER")!!).commit()
+        } else {
+            activity!!.supportFragmentManager.let { manager ->
+                manager.findFragmentByTag("PICKER")?.let { fragment ->
+                    manager.beginTransaction().remove(fragment).commit()
+                }
+            }
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        isSibling?.let {
+            outState.putBoolean("isSibling", it)
+        }
+    }
 
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        savedInstanceState?.let {
+            isSibling = it.getBoolean("isSibling", true)
+        }
+    }
 }
