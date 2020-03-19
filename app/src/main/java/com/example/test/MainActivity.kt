@@ -6,9 +6,10 @@ import android.os.PersistableBundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 
-class MainActivity : AppCompatActivity(), Listener {
+class MainActivity : AppCompatActivity(), DateTimeFragment.Listener, PickFragment.Listener {
 
     lateinit var activityButton: Button
     lateinit var siblingButton: Button
@@ -17,21 +18,12 @@ class MainActivity : AppCompatActivity(), Listener {
     lateinit var dateText: TextView
     lateinit var timeText: TextView
 
-    var mChildFragmentRemover: ChildFragmentRemover? = null
     var isSibling: Boolean? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        savedInstanceState?.let {
-            supportFragmentManager.findFragmentByTag("PICK")?.let {
-                isSibling = null
-                mChildFragmentRemover = it as PickFragment
-            }
-
-        }
 
         activityButton = findViewById(R.id.activity)
         siblingButton = findViewById(R.id.sibling_fragment)
@@ -43,13 +35,11 @@ class MainActivity : AppCompatActivity(), Listener {
         activityButton.setOnClickListener {
             supportFragmentManager.popBackStack("PICK", POP_BACK_STACK_INCLUSIVE)
             DateTimeFragment().show(supportFragmentManager, "PICKER")
-//            supportFragmentManager.beginTransaction().add(DateTimeFragment(),"PICKER").addToBackStack(null).commit()
         }
 
         siblingButton.setOnClickListener {
             isSibling = true
             val fragment = PickFragment.newInstance(isSibling!!)
-            mChildFragmentRemover = fragment
             supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment, "PICK")
                 .addToBackStack(null).commit()
@@ -57,24 +47,11 @@ class MainActivity : AppCompatActivity(), Listener {
         childButton.setOnClickListener {
             isSibling = false
             val fragment = PickFragment.newInstance(isSibling!!)
-            mChildFragmentRemover = fragment
             supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment, "PICK")
                 .addToBackStack(null).commit()
         }
 
-    }
-
-    override fun closeDialog() {
-        if (mChildFragmentRemover != null)
-            mChildFragmentRemover!!.removeChildFragment()
-        else {
-            supportFragmentManager.let {
-                it.findFragmentByTag("PICKER")?.let { frag ->
-                    it.beginTransaction().remove(frag).commit()
-                }
-            }
-        }
     }
 
     override fun dataChanged(isDate: Boolean, data: String) {
@@ -95,4 +72,13 @@ class MainActivity : AppCompatActivity(), Listener {
         super.onRestoreInstanceState(savedInstanceState)
         isSibling = savedInstanceState.getBoolean("isSibling", true)
     }
+
+    override fun onAttachFragment(fragment: Fragment) {
+        super.onAttachFragment(fragment)
+        if(fragment is DateTimeFragment)
+            fragment.setListenerCallback(this)
+        if(fragment is PickFragment)
+            fragment.setListenerCallback(this)
+    }
+
 }

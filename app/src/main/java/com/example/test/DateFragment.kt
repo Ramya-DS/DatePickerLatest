@@ -42,8 +42,10 @@ class DateFragment : Fragment(){
     private var currentMonth: Int = 0
     private var currentYear: Int = 0
 
+    fun setListenerCallback(callback: Listener){
+        this.listener=callback
+    }
 
-//    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,19 +66,13 @@ class DateFragment : Fragment(){
         currentMonth = initialMonth
         currentYear = initialYear
 
-//        datePicker.setOnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
-//            currentDate = dayOfMonth
-//            currentMonth = monthOfYear
-//            currentYear = year
-//        }
-
         datePicker.init(currentYear,currentMonth,currentDate) { view, year, monthOfYear, dayOfMonth ->
             currentDate = dayOfMonth
             currentMonth = monthOfYear
             currentYear = year
         }
 
-    cancelButton.setOnClickListener {
+        cancelButton.setOnClickListener {
             listener!!.closeDialog()
         }
 
@@ -114,22 +110,8 @@ class DateFragment : Fragment(){
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        arguments?.let {
-            isSibling = it.getBoolean("isSibling",true)
-        }
-
-        listener=context as Listener
-
-        if (listener == null) {
-            throw ClassCastException("$context implement")
-        }
+    interface Listener {
+        fun closeDialog()
+        fun dataChanged(isDate: Boolean, data:String)
     }
-//    override fun onDetach() {
-//        super.onDetach()
-//        listener=null
-//    }
-
 }

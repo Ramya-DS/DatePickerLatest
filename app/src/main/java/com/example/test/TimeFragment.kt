@@ -41,7 +41,9 @@ class TimeFragment : Fragment() {
     private var currentMinute = 0
 
 
-//    @RequiresApi(Build.VERSION_CODES.O)
+    fun setListenerCallback(callback: Listener){
+        this.listener=callback
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -99,7 +101,6 @@ class TimeFragment : Fragment() {
         isSibling?.let { outState.putBoolean("isSibling", it) }
     }
 
-//    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         savedInstanceState?.let {
@@ -109,22 +110,8 @@ class TimeFragment : Fragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        arguments?.let {
-            isSibling = it.getBoolean("isSibling",true)
-        }
-
-        listener=context as Listener
-
-        if (listener == null ) {
-            throw ClassCastException("$context implement")
-        }
+    interface Listener {
+        fun closeDialog()
+        fun dataChanged(isDate: Boolean, data:String)
     }
-//
-//    override fun onDetach() {
-//        super.onDetach()
-//        listener=null
-//    }
 }
